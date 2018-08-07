@@ -45,6 +45,7 @@ async function postESDoc(subm) {
 async function startSync() {
   console.log("Finding start page...")
   let startPage = await getStartPage()
+  startPage = startPage < 1 ? 1 : startPage
   console.log("Starting from page: " + startPage)
   return syncGatherToElasticsearch(gatherUrl(startPage), gatherOptions)
 }
