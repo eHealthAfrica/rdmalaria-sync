@@ -12,28 +12,28 @@ const gatherOptions = {
 }
 
 let elasticOptions = () => {
-  const auth = new Buffer(es.username + ":" + es.password).toString('base64')
+  const auth = new Buffer(es.username + ':' + es.password).toString('base64')
   return {
     headers: {
       'Authorization': `Basic ${auth}`,
       'Content-Type': 'application/json'
-    },
+    }
   }
 }
 
-async function getStartPage() {
+async function getStartPage () {
   let esDocCount = await getESDocCount()
   return Math.ceil(esDocCount / GATHER_PAGE_COUNT)
 }
 
-async function getESDocCount() {
+async function getESDocCount () {
   let url = `${es.url}${es.index}/_search`
   let resp = await fetch(url, elasticOptions())
   let json = await resp.json()
   return json.hits.total
 }
 
-async function postESDoc(subm) {
+async function postESDoc (subm) {
   let submId = subm.meta.instanceID.replace(/^uuid:/, '')
   let url = `${es.url}${es.index}/_doc/${submId}?pipeline=${es.pipeline}`
   let esOpts = elasticOptions()
@@ -42,22 +42,22 @@ async function postESDoc(subm) {
   return fetch(url, esOpts)
 }
 
-async function startSync() {
-  console.log("Finding start page...")
+async function startSync () {
+  console.log('Finding start page...')
   let startPage = await getStartPage()
   startPage = startPage < 1 ? 1 : startPage
-  console.log("Starting from page: " + startPage)
+  console.log('Starting from page: ' + startPage)
   return syncGatherToElasticsearch(gatherUrl(startPage), gatherOptions)
 }
 
-async function syncGatherToElasticsearch(url) {
-  console.log("Grabbing submission page... : " + url)
+async function syncGatherToElasticsearch (url) {
+  console.log('Grabbing submission page... : ' + url)
 
   let resp = await fetch(url, gatherOptions)
   let json = await resp.json()
   let results = json.results
 
-  console.log("Got submission page, posting submissions to ES...")
+  console.log('Got submission page, posting submissions to ES...')
 
   // this line removes all ODK-related metadata
   results = results.map(removeMetadata)
@@ -72,11 +72,11 @@ async function syncGatherToElasticsearch(url) {
   if (json.next) {
     syncGatherToElasticsearch(json.next)
   } else {
-    console.log("All done!")
+    console.log('All done!')
   }
 }
 
-function removeMetadata(obj) {
+function removeMetadata (obj) {
   const metadata = [
     '@id',
     '@version',
@@ -100,9 +100,9 @@ function removeMetadata(obj) {
 
 module.exports.sync = (event, context, callback) => {
   startSync()
-  .then(() => {
-    callback(null, { message: 'Finished successfully!', event })
-  }).catch((err) => {
-    callback(null, { message: 'Error: ' + err, event })
-  })
+    .then(() => {
+      callback(null, { message: 'Finished successfully!', event })
+    }).catch((err) => {
+      callback(null, { message: 'Error: ' + err, event })
+    })
 }

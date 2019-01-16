@@ -1,3 +1,3 @@
-let handler = require ('./handler')
+let handler = require('./handler')
 
-handler.sync(null,null,(_,msg) => console.log(msg))
+handler.sync(null, null, (_, msg) => console.log(msg))
