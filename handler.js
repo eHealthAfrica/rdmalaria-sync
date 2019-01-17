@@ -87,7 +87,7 @@ function removeMetadata (obj) {
     '@xmlns:xsd'
   ]
   let noMeta = {}
-  for (key in obj.payload) {
+  for (let key in obj.payload) {
     if (metadata.indexOf(key) === -1) {
       noMeta[key] = obj.payload[key]
     }
