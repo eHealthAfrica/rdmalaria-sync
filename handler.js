@@ -12,7 +12,7 @@ const gatherOptions = {
 }
 
 let elasticOptions = () => {
-  const auth = new Buffer.From(es.username + ':' + es.password).toString('base64')
+  const auth = Buffer.from(es.username + ':' + es.password).toString('base64')
   return {
     headers: {
       'Authorization': `Basic ${auth}`,
