@@ -30,7 +30,7 @@ async function getESDocCount () {
   let url = `${es.url}${es.index}/_search`
   let resp = await fetch(url, elasticOptions())
   let json = await resp.json()
-  return json.hits.total
+  return json.hits.total.value
 }
 
 async function postESDoc (subm) {
